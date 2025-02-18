@@ -34,7 +34,6 @@
 from math import log, inf
 import os
 import csv
-import pandas as pd
 from array import array
 
 def score_unigrams(training="training_data/", test="test_data/test_sentences.txt", output="output.csv"):
@@ -66,14 +65,12 @@ def score_unigrams(training="training_data/", test="test_data/test_sentences.txt
         for line in file_data:
             sent.append(line[:-1])
     tab = {"sentence": sent, "unigram_prob": unigram_prob}
-    df = pd.DataFrame(tab)
-    print(tab)
-    print(df)
-    print(sent)
-    df.to_csv(output, index=False) 
+    with open(output, 'w') as file:
+      writer = csv.DictWriter(file, fieldnames=["sentence","unigram_prob"])
+      writer.writerow(tab)
 
 
 # Do not modify the following line
 if __name__ == "__main__":
     # You can write code to test your function here
-    pass 
+      score_unigrams()
