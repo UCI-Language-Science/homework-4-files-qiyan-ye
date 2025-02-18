@@ -67,8 +67,8 @@ def score_unigrams(training="training_data/", test="test_data/test_sentences.txt
     tab = {"sentence": sent, "unigram_prob": unigram_prob}
     with open(output, 'w') as file:
       writer = csv.DictWriter(file, fieldnames=["sentence","unigram_prob"])
+      writer.writeheader()
       writer.writerow(tab)
-
 
 # Do not modify the following line
 if __name__ == "__main__":
