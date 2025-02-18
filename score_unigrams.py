@@ -32,15 +32,39 @@
 # You will need to use log and -inf here. 
 # You can add any additional import statements you need here.
 from math import log, inf
+import os
+import csv
+from array import array
 
-
-#######################
-# YOUR CODE GOES HERE #
-#######################
-
-
+def score_unigrams(training="training_data/", test="test_data/test_sentences.txt", output="output.csv"):
+    content = []
+    for filename in os.listdir(training):
+        f = os.path.join(training, filename)
+        with open(f, 'r') as file:
+            content += file.read().split()
+    content = [x.lower() for x in content]
+    d = {}
+    total = len(content)
+    for word in set(content):
+        d[word] = log(content.count(word) / total)
+    unigram_prob = []
+    sent = []
+    with open(test, 'r') as file_data:
+        for line in file_data: 
+            words = line.strip().split()
+            words = [x.lower() for x in words]
+            prob_list = []
+            for word in words:
+                prob_list.append(d.get(word, -inf))
+            sent.append(line.strip()) 
+            unigram_prob.append(sum(prob_list))
+    tab = [{"sentence": s, "unigram_prob": p} for s, p in zip(sent, unigram_prob)]
+    with open(output, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=["sentence", "unigram_prob"])
+        writer.writeheader()
+        writer.writerows(tab) 
 
 # Do not modify the following line
 if __name__ == "__main__":
     # You can write code to test your function here
-    pass 
+      score_unigrams()
