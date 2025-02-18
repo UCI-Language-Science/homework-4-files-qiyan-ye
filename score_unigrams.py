@@ -44,31 +44,25 @@ def score_unigrams(training="training_data/", test="test_data/test_sentences.txt
             content += file.read().split()
     content = [x.lower() for x in content]
     d = {}
-    for word in content:
-        if word not in d:
-            count = content.count(word)
-            total = len(content)
-            probability = log(count/total)
-            d[word] = probability
+    total = len(content)
+    for word in set(content):
+        d[word] = log(content.count(word) / total)
+    unigram_prob = []
+    sent = []
     with open(test, 'r') as file_data:
-        unigram_prob = [] 
-        prob_list = []
         for line in file_data: 
-            sent = line.split() 
-            sent = [x.lower() for x in sent]
-            for i in range(len(sent)):
-                if sent[i] in d: prob_list.append(d[sent[i]])
-                else: prob_list.append(-inf)
+            words = line.strip().split()
+            words = [x.lower() for x in words]
+            prob_list = []
+            for word in words:
+                prob_list.append(d.get(word, -inf))
+            sent.append(line.strip()) 
             unigram_prob.append(sum(prob_list))
-    with open(test,'r') as file_data:
-        sent = []
-        for line in file_data:
-            sent.append(line[:-1])
-    tab = {"sentence": sent, "unigram_prob": unigram_prob}
-    with open(output, 'w') as file:
-      writer = csv.DictWriter(file, fieldnames=["sentence","unigram_prob"])
-      writer.writeheader()
-      writer.writerow(tab)
+    tab = [{"sentence": s, "unigram_prob": p} for s, p in zip(sent, unigram_prob)]
+    with open(output, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=["sentence", "unigram_prob"])
+        writer.writeheader()
+        writer.writerows(tab) 
 
 # Do not modify the following line
 if __name__ == "__main__":
