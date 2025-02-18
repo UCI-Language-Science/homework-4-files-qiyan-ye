@@ -32,12 +32,45 @@
 # You will need to use log and -inf here. 
 # You can add any additional import statements you need here.
 from math import log, inf
+import os
+import csv
+import pandas as pd
+from array import array
 
-
-#######################
-# YOUR CODE GOES HERE #
-#######################
-
+def score_unigrams(training="training_data/", test="test_data/test_sentences.txt", output="output.csv"):
+    content = []
+    for filename in os.listdir(training):
+        f = os.path.join(training, filename)
+        with open(f, 'r') as file:
+            content += file.read().split()
+    content = [x.lower() for x in content]
+    d = {}
+    for word in content:
+        if word not in d:
+            count = content.count(word)
+            total = len(content)
+            probability = log(count/total)
+            d[word] = probability
+    with open(test, 'r') as file_data:
+        unigram_prob = [] 
+        prob_list = []
+        for line in file_data: 
+            sent = line.split() 
+            sent = [x.lower() for x in sent]
+            for i in range(len(sent)):
+                if sent[i] in d: prob_list.append(d[sent[i]])
+                else: prob_list.append(-inf)
+            unigram_prob.append(sum(prob_list))
+    with open(test,'r') as file_data:
+        sent = []
+        for line in file_data:
+            sent.append(line[:-1])
+    tab = {"sentence": sent, "unigram_prob": unigram_prob}
+    df = pd.DataFrame(tab)
+    print(tab)
+    print(df)
+    print(sent)
+    df.to_csv(output, index=False) 
 
 
 # Do not modify the following line
